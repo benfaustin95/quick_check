@@ -1,0 +1,54 @@
+name:                QuickCheckProject
+version:             0.1.0.0
+license:             BSD3
+author:              "Keylan Petty, Ben Austin"
+maintainer:          "keylan@pdx.edu, bena2@pdx.edu"
+copyright:           "2024 Keylan Petty, Ben Austin"
+
+extra-source-files:
+- README.md
+- CHANGELOG.md
+
+description:         Please see the README 
+
+dependencies:
+- base >= 4.7 && < 5
+
+ghc-options:
+- -Wall
+- -Wcompat
+- -Widentities
+- -Wincomplete-record-updates
+- -Wincomplete-uni-patterns
+- -Wmissing-export-lists
+- -Wmissing-home-modules
+- -Wpartial-fields
+- -Wredundant-constraints
+- -Wno-type-defaults
+
+library:
+  source-dirs: src
+  dependencies:
+  - QuickCheck
+
+executables:
+  QuickCheckProject-exe:
+    main:                Main.lhs
+    source-dirs:         app
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - QuickCheckProject
+
+tests:
+  QuickCheckProject-test:
+    main:                Spec.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - QuickCheckProject

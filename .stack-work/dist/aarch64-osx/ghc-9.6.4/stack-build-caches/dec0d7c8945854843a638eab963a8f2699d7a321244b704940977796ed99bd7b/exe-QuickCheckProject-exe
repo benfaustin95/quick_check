@@ -1,0 +1,14 @@
+/Users/keylanpetty/.ghcup/ghc/9.6.4/lib/ghc-9.6.4/lib/aarch64-osx-ghc-9.6.4/rts-1.0.2/include/ghcversion.h:
+  hash: cbc0ab805e5b827180e3116cecd3f6665988df7f45a6b64f0e09ea8c25c438ff
+? /Users/keylanpetty/QuickCheck_proj/QuickCheck/QuickCheck/.stack-work/dist/aarch64-osx/ghc-9.6.4/build/QuickCheckProject-exe/autogen/Paths_QuickCheckProject.hs
+: hash: cec0cd88dfc1045733e9d4baaa03863f412cf1c6ebedd4ede123a8f0806715e9
+? /Users/keylanpetty/QuickCheck_proj/QuickCheck/QuickCheck/.stack-work/dist/aarch64-osx/ghc-9.6.4/build/QuickCheckProject-exe/autogen/cabal_macros.h
+: hash: 17eced7a30d9718d0178b97e1866bd6441581122ab8bcfa5b2b379167e2cb18b
+/Users/keylanpetty/QuickCheck_proj/QuickCheck/QuickCheck/QuickCheckProject.cabal:
+  hash: 1c00f97ba48628a9f5e13d8bda653498ea3694d55cbfd99fc66d1f1e9d797a5c
+/Users/keylanpetty/QuickCheck_proj/QuickCheck/QuickCheck/README.md:
+  hash: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+/Users/keylanpetty/QuickCheck_proj/QuickCheck/QuickCheck/app/Main.lhs:
+  hash: ec35eeacf5d7b0a945d21b6226e43838461b978fa0ae5baf02363c5b58389cdf
+/Users/keylanpetty/QuickCheck_proj/QuickCheck/QuickCheck/package.yaml:
+  hash: 79929f1be1f87877dacb03dd3f4e1570cca4d5842027294759feca9b04ed5a7e
