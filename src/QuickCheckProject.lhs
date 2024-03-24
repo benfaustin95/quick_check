@@ -86,7 +86,6 @@ by us is required. FIXME
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Generating a BST using new composite data types. Uses genHomestead to generated nodes in a BST. 
 
-!!!!!!BEN!!!! worth looking over - I can't tell if solutions are the naive approach.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ 
 
 > insertHomestead :: Homestead -> BST Homestead -> BST Homestead
@@ -101,3 +100,42 @@ Generating a BST using new composite data types. Uses genHomestead to generated 
 > genBSTHomestead = do
 >    homesteads <- listOf genHomestead 
 >    return (foldr insertHomestead Empty homesteads)
+
+
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Arbitrary instances of these values use the Gen monad to test property functions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+> instance Arbitrary Species where
+>    arbitrary = genSpecies
+
+> instance Arbitrary Pet where
+>    arbitrary = genPet
+
+> instance Arbitrary Herd where
+>    arbitrary = genHerd
+
+> instance Arbitrary Land where
+>    arbitrary = genLand
+
+> instance Arbitrary Homestead where
+>    arbitrary = genHomestead
+
+
+prop_ValidHomestead :: Homestead -> Bool
+prop_ValidHomestead homestead = validateHomestead homestead
+
+Property for genPet: Every generated Pet should have an age within the bounds you've defined (1 to 100) or be Nothing.
+
+> prop_PetAgeIsValid :: Pet -> Bool
+> prop_PetAgeIsValid (Pet _ age) = maybe True (\a -> a >= 1 && a <= 100) age
+
+Property for genHerd: The generated Herd should only contain Pets that satisfy the property defined for genPet.
+
+> prop_HerdPetsAreValid :: Herd -> Bool
+> prop_HerdPetsAreValid (Herd pets) = all prop_PetAgeIsValid pets
+
+Property for genHomestead: Every Homestead must have a Plot size within the bounds you've defined (1 to 100).
+
+> prop_HomesteadLandSizeIsValid :: Homestead -> Bool
+> prop_HomesteadLandSizeIsValid (Homestead _ (Plot size)) = size >= 1 && size <= 100
