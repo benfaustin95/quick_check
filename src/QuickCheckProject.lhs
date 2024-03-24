@@ -4,7 +4,9 @@
 
 > module QuickCheckProject where
 
-> import Test.QuickCheck
+> import Test.QuickCheck(Arbitrary(..),Gen,Property,OrderedList(..),Testable(..),
+>                         forAll,frequency,sized,oneof,label, listOf,
+>                         quickCheck, verboseCheck,elements,sample)
 
 > import Data.List as List ()
 

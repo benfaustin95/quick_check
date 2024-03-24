@@ -3,4 +3,4 @@
 > import QuickCheckProject
 
 > main :: IO ()
-> main = undefined
+> main = undefined 
