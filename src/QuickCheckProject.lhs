@@ -5,7 +5,7 @@
 > module QuickCheckProject where
 
 > import Test.QuickCheck
-> import Control.Monad (liftM2,liftM3)
+> import Control.Monad (liftM2)
 > import Data.List (sort)
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -39,15 +39,15 @@ Functions For Testing
 
 > coyote_attack :: [Pet] -> [Pet] 
 > coyote_attack pets = case foldr attack (True, []) pets of
->                                (_, pets) -> pets 
->                                where attack pet (present, pets) = if not present
->                                                                  then (False, pet:pets)
+>                                (_, pets') -> pets'
+>                                where attack pet (present, pets') = if not present
+>                                                                  then (False, pet : pets')
 >                                                                  else case pet of 
->                                                                   (Pet Dragon _ _)  -> (False, pet:pets)
->                                                                   (Pet Dog _ _ )    -> (False, pet:pets)
->                                                                   (Pet Chicken _ power) -> (True, Pet Chicken Nothing power : pets)
+>                                                                   (Pet Dragon _ _)  -> (False, pet : pets')
+>                                                                   (Pet Dog _ _ )    -> (False, pet : pets')
+>                                                                   (Pet Chicken _ power) -> (True, Pet Chicken Nothing power : pets')
 >
->                                                                   _                 -> (True, pet:pets)
+>                                                                   _                 -> (True, pet : pets')
 
 > contains_predator :: [Pet] -> Bool
 > contains_predator = foldr (\(Pet spec _ _) p -> p && spec /= Dragon && spec /= Dog) True
@@ -86,7 +86,7 @@ Custom Generators
 
 > genOrderedHerd :: Int -> Gen Herd
 > genOrderedHerd n = do
->                list <- sized genPetList
+>                list <- genPetList n
 >                return (Herd (sort list))   
         
 > genLand :: Gen Land
@@ -158,15 +158,16 @@ Properties
 > prop_HerdAfterAttackIsValid:: Herd -> Property
 > prop_HerdAfterAttackIsValid (Herd pets) = 
 >       contains_predator pets ==> 
->       foldr (\(Pet spec age power) p -> (spec /= Chicken || age == Nothing) && p) True (coyote_attack pets)
+>       foldr (\(Pet spec age _ ) p -> (spec /= Chicken || age == Nothing) && p) True (coyote_attack pets)
 
-> prop_IsHerdOrdered:: Herd -> Property
-> prop_IsHerdOrdered herd = forAll (sized genOrderedHerd) (\(Herd pets) -> herd_is_ordered pets)
+> prop_IsHerdOrdered:: Property
+> prop_IsHerdOrdered = forAll (sized genOrderedHerd) (\(Herd pets) -> herd_is_ordered pets)
 
 > prop_HomesteadIsValid :: Homestead -> Bool
 > prop_HomesteadIsValid (Homestead herd (Plot size)) = size >= 1 && prop_HerdPetsAreValid herd
 
 > prop_TreeIsValid:: Tree -> Bool
-> prop_TreeIsValid (Leaf homestead) = prop_HomesteadIsValid homestead
+> prop_TreeIsValid Empty                       = True
+> prop_TreeIsValid (Leaf homestead)            = prop_HomesteadIsValid homestead
 > prop_TreeIsValid (Node homestead left right) = prop_HomesteadIsValid homestead && prop_TreeIsValid left && prop_TreeIsValid right 
 
