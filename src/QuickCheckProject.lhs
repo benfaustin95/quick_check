@@ -66,10 +66,20 @@ Functions For Testing
 > add_to_herd p  (p': ps)  | p < p'    = p : p' : ps
 >                          | otherwise = p': add_to_herd p ps
 
+> bury_the_tree :: Tree -> Tree 
+> bury_the_tree Empty = Empty
+> bury_the_tree (Leaf (Homestead (Herd pets) land)) = Leaf (Homestead (Herd (bury_the_dead pets)) land)
+> bury_the_tree (Node (Homestead (Herd pets) land) left right) = Node (Homestead (Herd (bury_the_dead pets)) land) (bury_the_tree left) (bury_the_tree right) 
+
 > size :: Tree -> Int
 > size Empty      = 0
 > size (Leaf _ )  = 1
 > size (Node _ left right) = 1 + size left + size right
+
+> count_herd_size :: Tree -> Bool -> Int
+> count_herd_size Empty _ = 0
+> count_herd_size (Leaf (Homestead (Herd pets) _ )) all' = foldr (\(Pet _ (Age a) _) acc -> acc + if a /= Nothing || all' then 1 else 0) 0 pets
+> count_herd_size (Node (Homestead (Herd pets) _) left right) all' = foldr (\(Pet _ (Age a) _) acc -> acc + if a /= Nothing || all' then 1 else 0) 0 pets + count_herd_size left all' + count_herd_size right all'
 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Custom Generators
@@ -108,8 +118,8 @@ Custom Generators
         
 > genLand :: Gen Land
 > genLand = do
->       size <- choose(1,1000)
->       return (Plot size) 
+>       size' <- choose(1,1000)
+>       return (Plot size') 
 
 > genHomestead :: Gen Homestead
 > genHomestead = do 
@@ -170,7 +180,7 @@ Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 > validate_homestead :: Homestead -> Bool
-> validate_homestead (Homestead (Herd pets) (Plot size))=  size >= 1 && foldr (\cur prev -> prev && prop_PetAgeIsValid cur) True pets
+> validate_homestead (Homestead (Herd pets) (Plot size'))=  size' >= 1 && foldr (\cur prev -> prev && prop_PetAgeIsValid cur) True pets
 
 > validate_tree :: Tree -> Bool 
 > validate_tree Empty                       = True
@@ -194,9 +204,9 @@ Properties
 
 > prop_HerdAttackedHerdAfterBuryingContainsNoChickens :: Herd -> Property
 > prop_HerdAttackedHerdAfterBuryingContainsNoChickens (Herd pets) =  length pets - getChickenCount pets === length (bury_the_dead (coyote_attack pets))
->                   where getChickenCount pets = case foldr (\(Pet s (Age a) _ ) (p, acc) -> 
+>                   where getChickenCount pets' = case foldr (\(Pet s (Age a) _ ) (p, acc) -> 
 >                                                              (p || s == Dragon || s == Dog, 
->                                                                    acc + if (not p && s == Chicken) || a == Nothing then 1 else 0)) (False, 0) pets of 
+>                                                                    acc + if (not p && s == Chicken) || a == Nothing then 1 else 0)) (False, 0) pets' of 
 >                                                                          (_, count) -> count;
 
 > prop_HerdOrdered :: Property
@@ -212,11 +222,14 @@ Properties
 >                                   foldr (\(Pet _ (Age a) _) p -> p && a /= Nothing) True (bury_the_dead pets)
 
 > prop_HomesteadIsValid :: Homestead -> Property
-> prop_HomesteadIsValid (Homestead (Herd pets) (Plot size)) = classify (null pets) "trivial validation" $
+> prop_HomesteadIsValid (Homestead (Herd pets) (Plot size')) = classify (null pets) "trivial validation" $
 >                                                             classify (length pets > 13) "excessive validation" $
->                                                             collect size $ 
->                                                                  validate_homestead (Homestead (Herd pets) (Plot size))
+>                                                             collect size' $ 
+>                                                                  validate_homestead (Homestead (Herd pets) (Plot size'))
 
 > prop_TreeIsValid:: Tree -> Property
 > prop_TreeIsValid tree = collect(size tree) $
 >                           validate_tree tree
+
+> prop_BurriedTreeIsValid :: Tree -> Property
+> prop_BurriedTreeIsValid tree = count_herd_size tree False === count_herd_size (bury_the_tree tree) True 
