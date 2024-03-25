@@ -1,13 +1,12 @@
 name:                QuickCheckProject
 version:             0.1.0.0
-license:             BSD3
+license:             MIT
 author:              "Keylan Petty, Ben Austin"
 maintainer:          "keylan@pdx.edu, bena2@pdx.edu"
 copyright:           "2024 Keylan Petty, Ben Austin"
 
 extra-source-files:
 - README.md
-
 
 description:         Please see the README 
 
@@ -41,14 +40,4 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - QuickCheckProject
-
-tests:
-  QuickCheckProject-test:
-    main:                Spec.hs
-    source-dirs:         test
-    ghc-options:
-    - -threaded
-    - -rtsopts
-    - -with-rtsopts=-N
-    dependencies:
-    - QuickCheckProject
+    - QuickCheck
